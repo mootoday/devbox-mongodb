@@ -1,0 +1,16 @@
+version: "0.5"
+
+processes:
+  mongodb:
+    command: "mongod --config=$MONGODB_CONFIG --dbpath=$MONGODB_DATA --bind_ip_all"
+    readiness_probe:
+      exec:
+        command: "mongosh --eval \"print('Waiting for MongoDB connection...')\""
+    availability:
+      restart: on_failure
+      max_restarts: 5
+  init_replicaset:
+    command: "mongosh --eval 'rs.status()' || mongosh --eval 'rs.initiate({ _id: \"rs0\", members: [ { _id: 0, host: \"localhost:27017\" } ] })'"
+    depends_on:
+      mongodb:
+        condition: process_started

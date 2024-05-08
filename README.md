@@ -3,12 +3,11 @@
 Start MongoDB with:
 
 ```
-devbox services up mongodb
+devbox run startMongo
 ```
 
 In a separate terminal:
 
 ```
-devbox shell
-mongosh
+devbox run mongosh
 ```
