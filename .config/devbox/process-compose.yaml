@@ -3,9 +3,16 @@ version: "0.5"
 processes:
   mongodb:
     command: "mongod --config=$MONGODB_CONFIG --dbpath=$MONGODB_DATA --bind_ip_all"
-    readiness_probe:
+    # Docs: https://f1bonacc1.github.io/process-compose/health/?h=liveness#readiness-probe
+    #readiness_probe:
+    #  exec:
+    #    command: "TODO: Use ping or run a DB-specific command to check for readiness"
+    # Docs: https://f1bonacc1.github.io/process-compose/health/?h=liveness#liveness-probe
+    liveness_probe:
       exec:
-        command: "mongosh --eval \"print('Waiting for MongoDB connection...')\""
+        command: "mongosh --eval 'db.runCommand(\"ping\").ok --quiet'"
+      initial_delay_seconds: 5
+      period_seconds: 15
     availability:
       restart: on_failure
       max_restarts: 5
